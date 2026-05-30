@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarity Workspace — Operator View</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================================
+   CLARITY WORKSPACE — Agency Operator Dashboard
+   ------------------------------------------------------------
+   >>> EDIT THE `CONFIG` OBJECT IN THE <script> TO WIRE PRODUCTS.
+   Links you add live in the UI now PERSIST (saved in-browser).
+   ============================================================ */
+        :root {
+            --cream: #F4EEE3;
+            --cream-2: #ECE2D3;
+            --cream-3: #E3D7C4;
+            --ink: #1A1611;
+            --ink-2: #221C15;
+            --ink-soft: #2B241B;
+            --gold: #B8893E;
+            --gold-2: #CBA265;
+            --gold-soft: #E8D9BD;
+            --muted: #73695B;
+            --muted-2: #9A8E7C;
+            --line: #DCD1BE;
+            --line-2: #CDBFA7;
+            --c-teal: #2F6E6A;
+            --c-purple: #6A5A93;
+            --c-orange: #C16A3C;
+            --c-blue: #3F5B89;
+            --c-green: #4E7A4A;
+            --c-rose: #A65A6B;
+            --c-amber: #B8893E;
+            --shadow-sm: 0 1px 2px rgba(26, 22, 17, .05), 0 2px 6px rgba(26, 22, 17, .04);
+            --shadow-md: 0 8px 24px rgba(26, 22, 17, .10), 0 2px 8px rgba(26, 22, 17, .06);
+            --shadow-lg: 0 18px 50px rgba(26, 22, 17, .16);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+            position: relative
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(1100px 600px at 88% -8%, rgba(184, 137, 62, .10), transparent 60%),
+                radial-gradient(800px 520px at -6% 110%, rgba(47, 110, 106, .07), transparent 55%);
+        }
+
+        .serif {
+            font-family: 'Fraunces', serif
+        }
+
+        /* top bar */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: var(--ink);
+            color: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 26px;
+            height: 62px;
+            border-bottom: 1px solid rgba(203, 162, 101, .25)
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px
+        }
+
+        .star {
+            width: 22px;
+            height: 22px;
+            flex: none;
+            color: var(--gold-2);
+            animation: spin 28s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .brand-name {
+            font-weight: 600;
+            letter-spacing: .34em;
+            font-size: 13px;
+            text-transform: uppercase
+        }
+
+        .brand-sub {
+            display: block;
+            font-size: 9px;
+            letter-spacing: .32em;
+            color: var(--gold-2);
+            margin-top: 2px
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px
+        }
+
+        .live-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--gold-soft);
+            border: 1px solid rgba(203, 162, 101, .3);
+            border-radius: 999px;
+            padding: 6px 13px
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #5BBF8A
+        }
+
+        .dot.live {
+            animation: pulse 2.2s ease-in-out infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px rgba(91, 191, 138, .18)
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(91, 191, 138, .05)
+            }
+        }
+
+        .operator {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .op-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex: none;
+            background: linear-gradient(135deg, var(--gold), var(--gold-2));
+            display: grid;
+            place-items: center;
+            color: var(--ink);
+            font-weight: 700;
+            font-size: 13px
+        }
+
+        .op-meta {
+            line-height: 1.2
+        }
+
+        .op-name {
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .op-role {
+            font-size: 10px;
+            color: var(--muted-2);
+            letter-spacing: .08em
+        }
+
+        .shell {
+            display: flex;
+            min-height: calc(100vh - 62px);
+            position: relative;
+            z-index: 1
+        }
+
+        /* sidebar */
+        .sidebar {
+            width: 266px;
+            flex: none;
+            background: linear-gradient(180deg, var(--cream) 0%, #EFE7D9 100%);
+            border-right: 1px solid var(--line);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .side-label {
+            font-size: 10px;
+            letter-spacing: .26em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 600;
+            padding: 4px 8px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .side-label .count {
+            color: var(--muted-2);
+            letter-spacing: .1em
+        }
+
+        .client {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 11px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            position: relative;
+            transition: background .18s, border-color .18s
+        }
+
+        .client:hover {
+            background: rgba(184, 137, 62, .07)
+        }
+
+        .client.active {
+            background: #fff;
+            border-color: var(--line-2);
+            box-shadow: var(--shadow-sm)
+        }
+
+        .client.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 14px;
+            bottom: 14px;
+            width: 3px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, var(--gold), var(--gold-2))
+        }
+
+        .client.onboarding {
+            opacity: .5;
+            cursor: not-allowed;
+            filter: grayscale(.25)
+        }
+
+        .client.onboarding:hover {
+            background: transparent
+        }
+
+        .client-mono {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            flex: none;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            letter-spacing: .02em
+        }
+
+        .client-info {
+            min-width: 0;
+            flex: 1
+        }
+
+        .client-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .client-tag {
+            font-size: 10.5px;
+            color: var(--muted);
+            letter-spacing: .02em;
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .client-status {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex: none;
+            background: var(--c-green)
+        }
+
+        .client-status.draft {
+            background: var(--gold-2)
+        }
+
+        .lock {
+            width: 11px;
+            height: 11px;
+            color: var(--muted-2);
+            flex: none
+        }
+
+        .add-client {
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            padding: 11px;
+            border-radius: 11px;
+            cursor: pointer;
+            border: 1px dashed var(--line-2);
+            color: var(--muted);
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: .18s
+        }
+
+        .add-client:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(184, 137, 62, .05)
+        }
+
+        .side-foot {
+            margin-top: auto;
+            padding: 14px 10px 4px;
+            border-top: 1px solid var(--line)
+        }
+
+        .side-foot a {
+            color: var(--muted);
+            font-size: 11px;
+            text-decoration: none;
+            letter-spacing: .04em;
+            display: block;
+            line-height: 1.9;
+            cursor: pointer
+        }
+
+        .side-foot a:hover {
+            color: var(--gold)
+        }
+
+        /* main */
+        .main {
+            flex: 1;
+            padding: 30px 38px 60px;
+            min-width: 0
+        }
+
+        .page-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 6px;
+            flex-wrap: wrap
+        }
+
+        .page-head h1 {
+            font-size: 34px;
+            font-weight: 500;
+            letter-spacing: -.01em;
+            line-height: 1.05
+        }
+
+        .page-head h1 .accent {
+            color: var(--gold);
+            font-style: italic
+        }
+
+        .page-sub {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 8px;
+            max-width: 560px;
+            line-height: 1.5
+        }
+
+        .ctx-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--line-2);
+            border-radius: 999px;
+            padding: 7px 14px;
+            font-size: 12px;
+            color: var(--muted);
+            box-shadow: var(--shadow-sm)
+        }
+
+        .ctx-chip b {
+            color: var(--ink)
+        }
+
+        .section {
+            margin-top: 34px
+        }
+
+        .sec-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px
+        }
+
+        .sec-eyebrow {
+            font-size: 11px;
+            letter-spacing: .24em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 600
+        }
+
+        .sec-title {
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: -.01em
+        }
+
+        .sec-rule {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--line-2), transparent)
+        }
+
+        /* intel layout: ICP+BrandBook left, Context Graph right */
+        .intel-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 16px;
+            align-items: stretch
+        }
+
+        .intel-left {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 16px
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px
+        }
+
+        .grid.growth {
+            grid-template-columns: repeat(2, 1fr)
+        }
+
+        .card {
+            background: var(--cream-2);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            opacity: 0;
+            transform: translateY(14px)
+        }
+
+        .card.in {
+            opacity: 1;
+            transform: none
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 3px;
+            background: var(--accent, var(--gold));
+            opacity: .9
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--line-2)
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px
+        }
+
+        .icon-wrap {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            flex: none;
+            display: grid;
+            place-items: center;
+            background: color-mix(in srgb, var(--accent) 14%, #fff);
+            color: var(--accent);
+            border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent)
+        }
+
+        .icon-wrap svg {
+            width: 21px;
+            height: 21px
+        }
+
+        .badge {
+            font-size: 9.5px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 999px;
+            white-space: nowrap
+        }
+
+        .badge.live {
+            background: rgba(78, 122, 74, .14);
+            color: #3e6b3a
+        }
+
+        .badge.preview {
+            background: rgba(184, 137, 62, .16);
+            color: #9a6f29
+        }
+
+        .badge.draft {
+            background: rgba(115, 105, 91, .14);
+            color: var(--muted)
+        }
+
+        .card-title {
+            font-size: 16.5px;
+            font-weight: 600;
+            letter-spacing: -.01em;
+            display: flex;
+            align-items: baseline;
+            gap: 8px
+        }
+
+        .abbr {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: .1em;
+            border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+            padding: 2px 6px;
+            border-radius: 6px
+        }
+
+        .card-desc {
+            font-size: 12.8px;
+            color: var(--muted);
+            line-height: 1.5;
+            flex: 1
+        }
+
+        .card-foot {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .open-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            background: var(--ink);
+            color: var(--cream);
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            letter-spacing: .03em;
+            text-decoration: none;
+            transition: background .18s, transform .12s
+        }
+
+        .open-btn:hover {
+            background: var(--ink-soft)
+        }
+
+        .open-btn:active {
+            transform: scale(.98)
+        }
+
+        .open-btn svg {
+            width: 14px;
+            height: 14px;
+            transition: transform .18s
+        }
+
+        .open-btn:hover svg {
+            transform: translateX(3px)
+        }
+
+        .open-btn.empty {
+            background: transparent;
+            color: var(--muted);
+            border: 1px dashed var(--line-2)
+        }
+
+        .open-btn.empty:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+            background: rgba(184, 137, 62, .05)
+        }
+
+        .gear {
+            width: 38px;
+            height: 38px;
+            flex: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            background: #fff;
+            border: 1px solid var(--line-2);
+            color: var(--muted);
+            transition: .16s;
+            opacity: 1
+        }
+
+        .gear:hover {
+            color: var(--gold);
+            border-color: var(--gold)
+        }
+
+        .gear svg {
+            width: 16px;
+            height: 16px
+        }
+
+        /* once a link is saved, the edit affordance fades away — only on hover does it return */
+        .card.linked .gear {
+            opacity: 0;
+            width: 0;
+            border: none;
+            pointer-events: none;
+            transition: opacity .15s
+        }
+
+        .card.linked:hover .gear {
+            opacity: 1;
+            width: 38px;
+            border: 1px solid var(--line-2);
+            pointer-events: auto
+        }
+
+        .link-editor {
+            display: none;
+            gap: 8px
+        }
+
+        .link-editor.open {
+            display: flex
+        }
+
+        .link-editor input {
+            flex: 1;
+            padding: 9px 12px;
+            border-radius: 9px;
+            border: 1px solid var(--line-2);
+            background: #fff;
+            font-family: inherit;
+            font-size: 12.5px;
+            color: var(--ink);
+            outline: none
+        }
+
+        .link-editor input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(184, 137, 62, .12)
+        }
+
+        .link-editor button {
+            padding: 0 16px;
+            border-radius: 9px;
+            border: none;
+            cursor: pointer;
+            background: var(--gold);
+            color: var(--ink);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .04em
+        }
+
+        .link-editor button:hover {
+            background: var(--gold-2)
+        }
+
+        /* Context Graph card (right column) */
+        .ctxcard {
+            background: var(--ink);
+            color: var(--cream);
+            border-radius: 16px;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            border: 1px solid rgba(203, 162, 101, .25);
+            opacity: 0;
+            transform: translateY(14px);
+            transition: transform .18s, box-shadow .18s, opacity .4s
+        }
+
+        .ctxcard.in {
+            opacity: 1;
+            transform: none
+        }
+
+        .ctxcard:hover {
+            box-shadow: var(--shadow-lg)
+        }
+
+        .ctxcard::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: .6;
+            background: radial-gradient(420px 200px at 80% 0%, rgba(184, 137, 62, .22), transparent 60%)
+        }
+
+        .ctx-rel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            height: 100%
+        }
+
+        .ctxcard .card-top .icon-wrap {
+            background: rgba(203, 162, 101, .14);
+            border-color: rgba(203, 162, 101, .3);
+            color: var(--gold-2)
+        }
+
+        .ctxcard .card-title {
+            color: var(--cream)
+        }
+
+        .ctxcard .card-desc {
+            color: var(--muted-2)
+        }
+
+        .ctx-preview {
+            flex: 1;
+            min-height: 150px;
+            border-radius: 12px;
+            background: rgba(244, 238, 227, .04);
+            border: 1px solid rgba(203, 162, 101, .16);
+            display: grid;
+            place-items: center;
+            padding: 8px
+        }
+
+        .ctx-preview svg {
+            width: 100%;
+            height: auto;
+            max-height: 170px
+        }
+
+        .ctxopen {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid rgba(203, 162, 101, .45);
+            background: transparent;
+            color: var(--gold-2);
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            transition: .18s
+        }
+
+        .ctxopen:hover {
+            background: rgba(203, 162, 101, .12);
+            color: var(--gold-soft)
+        }
+
+        .ctxopen svg {
+            width: 15px;
+            height: 15px;
+            transition: transform .18s
+        }
+
+        .ctxopen:hover svg {
+            transform: translateX(3px)
+        }
+
+        /* BCP strip */
+        .bcp {
+            margin-top: 18px;
+            background: var(--ink);
+            border-radius: 18px;
+            padding: 22px 26px;
+            color: var(--cream);
+            position: relative;
+            overflow: hidden
+        }
+
+        .bcp::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: .5;
+            background: radial-gradient(560px 200px at 12% 0%, rgba(184, 137, 62, .22), transparent 60%)
+        }
+
+        .bcp-inner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap
+        }
+
+        .bcp-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 240px
+        }
+
+        .bcp-core {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            flex: none;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 35% 30%, #2c2519, #0e0b07);
+            border: 1px solid rgba(203, 162, 101, .4);
+            color: var(--gold-2)
+        }
+
+        .bcp-core svg {
+            width: 22px;
+            height: 22px;
+            animation: spin 22s linear infinite
+        }
+
+        .bcp-title {
+            font-weight: 600;
+            font-size: 15px
+        }
+
+        .bcp-desc {
+            font-size: 11.5px;
+            color: var(--muted-2);
+            letter-spacing: .04em;
+            margin-top: 2px
+        }
+
+        .connectors {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .conn {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: rgba(244, 238, 227, .06);
+            border: 1px solid rgba(203, 162, 101, .18);
+            border-radius: 11px;
+            padding: 9px 13px
+        }
+
+        .conn-name {
+            font-size: 12.5px;
+            font-weight: 600
+        }
+
+        .conn-status {
+            font-size: 9px;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            font-weight: 700
+        }
+
+        .conn-status.live {
+            color: #6fcf97
+        }
+
+        .conn-status.preview {
+            color: var(--gold-2)
+        }
+
+        .conn-ico {
+            width: 18px;
+            height: 18px;
+            flex: none;
+            display: grid;
+            place-items: center;
+            color: var(--gold-2)
+        }
+
+        .conn-ico svg {
+            width: 16px;
+            height: 16px
+        }
+
+        /* ===== Context Graph full page overlay ===== */
+        .graph-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            background: var(--cream);
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity .25s
+        }
+
+        .graph-overlay.open {
+            display: flex;
+            opacity: 1
+        }
+
+        .graph-overlay::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(900px 500px at 85% 0%, rgba(184, 137, 62, .10), transparent 60%)
+        }
+
+        .graph-top {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding: 18px 30px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(244, 238, 227, .7);
+            backdrop-filter: blur(6px)
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: #fff;
+            border: 1px solid var(--line-2);
+            border-radius: 10px;
+            padding: 9px 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--ink);
+            transition: .16s
+        }
+
+        .back:hover {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .graph-title {
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            font-weight: 500
+        }
+
+        .graph-title span {
+            color: var(--gold);
+            font-style: italic
+        }
+
+        .graph-meta {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--line-2);
+            border-radius: 999px;
+            padding: 7px 14px
+        }
+
+        .graph-meta b {
+            color: var(--ink)
+        }
+
+        .graph-stage {
+            position: relative;
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            overflow: auto
+        }
+
+        .graphsvg {
+            width: 100%;
+            height: 100%;
+            max-width: 1100px;
+            max-height: 640px
+        }
+
+        .edge {
+            fill: none;
+            stroke-width: 2.2
+        }
+
+        .edge.live {
+            stroke-dasharray: 6 8;
+            animation: flow 1.1s linear infinite
+        }
+
+        .edge.pending {
+            stroke-dasharray: 3 7;
+            opacity: .8
+        }
+
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -28
+            }
+        }
+
+        .glegend {
+            position: absolute;
+            bottom: 18px;
+            left: 24px;
+            display: flex;
+            gap: 18px;
+            font-size: 11.5px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, .7);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 9px 14px;
+            backdrop-filter: blur(4px)
+        }
+
+        .glegend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px
+        }
+
+        .lg-line {
+            width: 22px;
+            height: 0;
+            border-top: 2.5px dashed var(--gold)
+        }
+
+        .lg-line.pend {
+            border-top-color: var(--line-2)
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--ink);
+            color: var(--cream);
+            padding: 12px 20px;
+            border-radius: 11px;
+            font-size: 13px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s;
+            z-index: 120;
+            border: 1px solid rgba(203, 162, 101, .3)
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0)
+        }
+
+        @media(max-width:980px) {
+            .intel-layout {
+                grid-template-columns: 1fr
+            }
+
+            .intel-left {
+                grid-template-rows: auto auto
+            }
+        }
+
+        @media(max-width:860px) {
+            .sidebar {
+                display: none
+            }
+
+            .main {
+                padding: 24px 18px 50px
+            }
+
+            .grid.growth {
+                grid-template-columns: 1fr
+            }
+
+            .page-head h1 {
+                font-size: 27px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <svg class="star" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 0c.6 6.4 5 10.8 11.4 11.4C17 12 12.6 16.4 12 22.8 11.4 16.4 7 12 0 11.4 6.4 10.8 11.4 6.4 12 0z" />
+            </svg>
+            <div><span class="brand-name">Clarity Workspace</span><span class="brand-sub">Agency Operator View</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="live-pill"><span class="dot live"></span> All systems live</div>
+            <div class="operator">
+                <div class="op-avatar">AJ</div>
+                <div class="op-meta">
+                    <div class="op-name">Arihant Jain</div>
+                    <div class="op-role">Founder · Agentic</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="side-label">Clients <span class="count" id="clientCount"></span></div>
+            <div id="clientList"></div>
+            <div class="add-client" onclick="addClient()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round">
+                    <path d="M12 5v14M5 12h14" />
+                </svg>
+                Add client
+            </div>
+            <div class="side-foot">
+                <a onclick="openGraph()">Context Graph →</a>
+                <a href="#" target="_blank">Workspace settings →</a>
+                <a href="#" target="_blank">Billing &amp; plans →</a>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="page-head">
+                <div>
+                    <h1 class="serif">Brand <span class="accent">Intelligence</span> &amp; Growth</h1>
+                    <p class="page-sub">One workspace. Every module connected to the live Brand Intelligence Layer for
+                        the active client.</p>
+                </div>
+                <div class="ctx-chip">Active client: <b id="ctxClient">—</b></div>
+            </div>
+
+            <section class="section">
+                <div class="sec-head"><span class="sec-eyebrow">The Intelligence Layer</span><span
+                        class="sec-title">Brand Intelligence</span><span class="sec-rule"></span></div>
+                <div class="intel-layout">
+                    <div class="intel-left" id="intelLeft"></div>
+                    <div id="contextCard"></div>
+                </div>
+
+                <div class="bcp">
+                    <div class="bcp-inner">
+                        <div class="bcp-left">
+                            <div class="bcp-core"><svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 0c.6 6.4 5 10.8 11.4 11.4C17 12 12.6 16.4 12 22.8 11.4 16.4 7 12 0 11.4 6.4 10.8 11.4 6.4 12 0z" />
+                                </svg></div>
+                            <div>
+                                <div class="bcp-title">Brand Context Protocol (BCP)</div>
+                                <div class="bcp-desc">Pushes the active client's brand context into every connected tool
+                                </div>
+                            </div>
+                        </div>
+                        <div class="connectors" id="connectorRow"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="sec-head"><span class="sec-eyebrow">Execution</span><span class="sec-title">Growth
+                        Modules</span><span class="sec-rule"></span></div>
+                <div class="grid growth" id="growthGrid"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ===== Context Graph page ===== -->
+    <div class="graph-overlay" id="graphOverlay">
+        <div class="graph-top">
+            <button class="back" onclick="closeGraph()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M11 18l-6-6 6-6" />
+                </svg>
+                Back to workspace
+            </button>
+            <div class="graph-title">Context Graph — <span id="graphClient"></span></div>
+            <div class="graph-meta" id="graphMeta"></div>
+        </div>
+        <div class="graph-stage">
+            <div id="graphStage" style="width:100%;height:100%;display:grid;place-items:center"></div>
+            <div class="glegend">
+                <span><span class="lg-line"></span> Connected &amp; flowing</span>
+                <span><span class="lg-line pend"></span> Awaiting link</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ============================================================
+           CONFIG — edit clients, links, modules here
+           ============================================================ */
+        const CONFIG = {
+            clients: [
+                {
+                    code: "KKCL", name: "KKCL", tag: "Onboarding in progress", color: "#6A5A93", status: "draft", onboarding: true,
+                    links: {}
+                },
+                {
+                    code: "ITK", name: "ITK", tag: "Brand Intelligence · Live", color: "#2F6E6A", status: "live",
+                    links: { icp: "", brandbook: "", campaign: "", creative: "", pdp: "", clarwiz: "" }
+                },
+                {
+                    code: "PPR", name: "PapaRich", tag: "Onboarding in progress", color: "#C16A3C", status: "draft", onboarding: true,
+                    links: {}
+                },
+                {
+                    code: "CLR", name: "Clarity", tag: "Brand Intelligence · Live", color: "#3F5B89", status: "live",
+                    links: { icp: "", brandbook: "", campaign: "", creative: "", pdp: "", clarwiz: "" }
+                },
+            ],
+            // Brand Intelligence link-cards (left column)
+            intelModules: [
+                {
+                    id: "icp", title: "ICP & Personas", abbr: "ICP", status: "live", accent: "var(--c-teal)",
+                    desc: "Ideal customer profiles and buyer personas — the foundation every other module reads from.", icon: "users"
+                },
+                {
+                    id: "brandbook", title: "Brand Book", abbr: "BB", status: "live", accent: "var(--c-amber)",
+                    desc: "Voice, tone, visual rules and messaging pillars in one living, AI-readable source of truth.", icon: "book"
+                },
+            ],
+            // Growth / Execution modules (your sketch)
+            growthModules: [
+                {
+                    id: "campaign", title: "Campaign Manager", abbr: "CMP", status: "live", accent: "var(--c-orange)",
+                    desc: "Plan, brief and run multi-channel campaigns powered by the client's Intelligence Layer.", icon: "megaphone"
+                },
+                {
+                    id: "creative", title: "Creative Studio", abbr: "CS", status: "live", accent: "var(--c-purple)",
+                    desc: "Generate on-brand statics, reels and copy that stay consistent with the Brand Book.", icon: "sparkle"
+                },
+                {
+                    id: "pdp", title: "PDP Engine", abbr: "PDP", status: "preview", accent: "var(--c-teal)",
+                    desc: "Build and optimise product detail pages from brand context and conversion data.", icon: "layout"
+                },
+                {
+                    id: "clarwiz", title: "Clarwiz", abbr: "AI", status: "preview", accent: "var(--c-amber)",
+                    desc: "The workspace co-pilot — ask anything about the client, draft, and trigger any module.", icon: "wand"
+                },
+            ],
+            connectors: [
+                { name: "Claude", status: "live", icon: "sparkle" },
+                { name: "ChatGPT", status: "live", icon: "chat" },
+                { name: "Slack", status: "live", icon: "hash" },
+                { name: "Zendesk", status: "preview", icon: "life" },
+                { name: "Canva", status: "preview", icon: "layout" },
+            ],
+        };
+
+        const ICONS = {
+            users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+            book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+            graph: '<circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6.5 7.2 11 16M17.5 7.2 13 16M7 6h10"/>',
+            chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+            search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+            megaphone: '<path d="m3 11 14-6v14L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/><path d="M17 7a5 5 0 0 1 0 10"/>',
+            sparkle: '<path d="M12 2c.4 4.5 3.5 7.6 8 8-4.5.4-7.6 3.5-8 8-.4-4.5-3.5-7.6-8-8 4.5-.4 7.6-3.5 8-8z"/>',
+            layout: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+            wand: '<path d="m15 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/><path d="M5 19 16 8"/><path d="m18 11 1 1"/>',
+            hash: '<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',
+            life: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="m5 5 4.5 4.5M14.5 14.5 19 19M19 5l-4.5 4.5M9.5 14.5 5 19"/>',
+            network: '<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M11 7 6.5 16M13 7l4.5 9M7.4 18h9.2"/>',
+            globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3C9.4 5.7 9.4 18.3 12 21"/>',
+            mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+        };
+        function svg(name) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ""}</svg>` }
+
+        /* ---------- persistence (saves links; degrades safely in sandbox) ---------- */
+        const STORE_KEY = "clarity-ws-links-v1";
+        function loadStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {} } catch (e) { return {} } }
+        function saveStore(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)) } catch (e) { } }
+        (function hydrate() { const s = loadStore(); CONFIG.clients.forEach(c => { if (s[c.code]) Object.assign(c.links, s[c.code]) }) })();
+
+        /* ---------- state ---------- */
+        let active = CONFIG.clients.find(c => !c.onboarding) || CONFIG.clients[0];
+
+        /* ---------- sidebar ---------- */
+        function renderClients() {
+            const wrap = document.getElementById("clientList");
+            document.getElementById("clientCount").textContent = CONFIG.clients.length;
+            wrap.innerHTML = "";
+            CONFIG.clients.forEach(c => {
+                const el = document.createElement("div");
+                el.className = "client" + (c.code === active.code ? " active" : "") + (c.onboarding ? " onboarding" : "");
+                if (!c.onboarding) el.onclick = () => { active = c; renderAll() };
+                el.innerHTML = `
+      <div class="client-mono" style="background:linear-gradient(135deg,${c.color},${shade(c.color, 30)})">${c.code.slice(0, 4)}</div>
+      <div class="client-info">
+        <div class="client-name">${c.name}</div>
+        <div class="client-tag">${c.onboarding ? '<svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' : ''}${c.tag}</div>
+      </div>
+      ${c.onboarding ? '' : '<span class="client-status"></span>'}`;
+                wrap.appendChild(el);
+            });
+        }
+
+        /* ---------- intel + growth cards ---------- */
+        function card(mod) {
+            const url = (active.links[mod.id] || "").trim();
+            const has = url !== "";
+            const el = document.createElement("div");
+            el.className = "card" + (has ? " linked" : "");
+            el.style.setProperty("--accent", mod.accent);
+            el.innerHTML = `
+    <div class="card-top"><div class="icon-wrap">${svg(mod.icon)}</div><span class="badge ${mod.status}">${mod.status}</span></div>
+    <div class="card-title">${mod.title}<span class="abbr">${mod.abbr}</span></div>
+    <div class="card-desc">${mod.desc}</div>
+    <div class="card-foot">
+      ${has
+                    ? `<a class="open-btn" href="${escapeAttr(url)}" target="_blank" rel="noopener">Open ${mod.abbr} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>`
+                    : `<button class="open-btn empty" onclick="toggleEditor(this)">+ Add link</button>`}
+      <div class="gear" title="Edit link" onclick="toggleEditor(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+      </div>
+    </div>
+    <div class="link-editor">
+      <input type="url" placeholder="https://… link for ${mod.title} (${active.name})" value="${escapeAttr(url)}">
+      <button onclick="saveLink('${mod.id}',this)">Save</button>
+    </div>`;
+            return el;
+        }
+
+        function renderContextCard() {
+            const wrap = document.getElementById("contextCard");
+            const icpLive = !!(active.links.icp || "").trim();
+            const bbLive = !!(active.links.brandbook || "").trim();
+            wrap.innerHTML = `
+    <div class="ctxcard" id="ctxCardEl">
+      <div class="ctx-rel">
+        <div class="card-top"><div class="icon-wrap">${svg("network")}</div><span class="badge live">live</span></div>
+        <div class="card-title">Context Graph<span class="abbr" style="color:var(--gold-2);border-color:rgba(203,162,101,.4)">CG</span></div>
+        <div class="card-desc">A live map of every data source feeding this client's Brand Intelligence. Brand Book and ICP light up the moment their links are connected.</div>
+        <div class="ctx-preview">${miniGraph(icpLive, bbLive)}</div>
+        <button class="ctxopen" onclick="openGraph()">Open Context Graph
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>`;
+        }
+
+        function renderGrids() {
+            const left = document.getElementById("intelLeft");
+            const gg = document.getElementById("growthGrid");
+            left.innerHTML = ""; gg.innerHTML = "";
+            CONFIG.intelModules.forEach(m => left.appendChild(card(m)));
+            renderContextCard();
+            CONFIG.growthModules.forEach(m => gg.appendChild(card(m)));
+            const all = [...document.querySelectorAll(".card"), document.getElementById("ctxCardEl")].filter(Boolean);
+            all.forEach((c, i) => setTimeout(() => c.classList.add("in"), 60 + i * 45));
+        }
+
+        function renderConnectors() {
+            const row = document.getElementById("connectorRow"); row.innerHTML = "";
+            CONFIG.connectors.forEach(c => {
+                const el = document.createElement("div"); el.className = "conn";
+                el.innerHTML = `<span class="conn-ico">${svg(c.icon)}</span><span class="conn-name">${c.name}</span><span class="conn-status ${c.status}">${c.status}</span>`;
+                row.appendChild(el);
+            });
+        }
+        function renderHeader() { document.getElementById("ctxClient").textContent = active.name }
+        function renderAll() { renderClients(); renderHeader(); renderConnectors(); renderGrids(); }
+
+        /* ---------- mini graph preview ---------- */
+        function miniGraph(icpLive, bbLive) {
+            const flow = 'stroke-dasharray="4 5" style="animation:flow 1.1s linear infinite"';
+            const icpCol = icpLive ? 'var(--c-teal)' : 'rgba(203,162,101,.35)';
+            const bbCol = bbLive ? 'var(--gold-2)' : 'rgba(203,162,101,.35)';
+            return `<svg viewBox="0 0 320 150" fill="none">
+    ${[40, 75, 110].map(y => `<circle cx="34" cy="${y}" r="6" fill="rgba(203,162,101,.5)"/>`).join("")}
+    <path d="M40 40 C90 40,90 55,135 55" stroke="rgba(203,162,101,.4)" stroke-width="2" ${flow}/>
+    <path d="M40 75 C90 75,90 55,135 55" stroke="rgba(203,162,101,.4)" stroke-width="2" ${flow}/>
+    <path d="M40 110 C90 110,90 100,135 100" stroke="rgba(203,162,101,.4)" stroke-width="2" ${flow}/>
+    <rect x="135" y="40" width="74" height="30" rx="8" fill="rgba(47,110,106,.18)" stroke="${icpCol}" stroke-width="1.6"/>
+    <text x="172" y="59" text-anchor="middle" font-family="Hanken Grotesk" font-size="11" font-weight="700" fill="var(--cream)">ICP</text>
+    <rect x="135" y="85" width="74" height="30" rx="8" fill="rgba(184,137,62,.18)" stroke="${bbCol}" stroke-width="1.6"/>
+    <text x="172" y="104" text-anchor="middle" font-family="Hanken Grotesk" font-size="11" font-weight="700" fill="var(--cream)">Brand Book</text>
+    <path d="M209 55 C250 55,250 70,272 70" stroke="${icpCol}" stroke-width="2.2" ${icpLive ? flow : 'stroke-dasharray="3 6" opacity=".7"'}/>
+    <path d="M209 100 C250 100,250 80,272 80" stroke="${bbCol}" stroke-width="2.2" ${bbLive ? flow : 'stroke-dasharray="3 6" opacity=".7"'}/>
+    <circle cx="290" cy="75" r="20" fill="#0e0b07" stroke="var(--gold)" stroke-width="2"/>
+    <path transform="translate(280,65) scale(0.85)" d="M12 0c.6 6.4 5 10.8 11.4 11.4C17 12 12.6 16.4 12 22.8 11.4 16.4 7 12 0 11.4 6.4 10.8 11.4 6.4 12 0z" fill="var(--gold-2)"/>
+  </svg>`;
+        }
+
+        /* ---------- full Context Graph ---------- */
+        function gNode(cx, cy, label, icon, accent, state) {
+            const w = 168, h = 54, x = cx - w / 2, y = cy - h / 2;
+            const pending = state === "pending";
+            const fill = pending ? "#EFE7D9" : "#fff";
+            const stroke = pending ? "var(--line-2)" : accent;
+            const txt = pending ? "var(--muted)" : "var(--ink)";
+            const statusDot = (state === "live") ? `<circle cx="${x + w - 13}" cy="${y + 13}" r="4" fill="var(--c-green)"/>`
+                : (state === "pending") ? `<circle cx="${x + w - 13}" cy="${y + 13}" r="4" fill="var(--gold-2)"/>` : ``;
+            return `<g>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="13" fill="${fill}" stroke="${stroke}" stroke-width="1.7" ${pending ? 'stroke-dasharray="5 4"' : ''}/>
+    <g transform="translate(${x + 15},${cy - 9}) scale(0.8)" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[icon]}</g>
+    <text x="${x + 44}" y="${cy + 5}" font-family="Hanken Grotesk, sans-serif" font-size="13" font-weight="600" fill="${txt}">${label}</text>
+    ${statusDot}
+  </g>`;
+        }
+        function gCore(cx, cy) {
+            return `<g>
+    <circle cx="${cx}" cy="${cy}" r="56" fill="var(--ink)" stroke="var(--gold)" stroke-width="2.2"/>
+    <circle cx="${cx}" cy="${cy}" r="68" fill="none" stroke="var(--gold)" stroke-width="1" opacity=".3"/>
+    <g transform="translate(${cx - 16},${cy - 30}) scale(1.35)" fill="var(--gold-2)"><path d="M12 0c.6 6.4 5 10.8 11.4 11.4C17 12 12.6 16.4 12 22.8 11.4 16.4 7 12 0 11.4 6.4 10.8 11.4 6.4 12 0z"/></g>
+    <text x="${cx}" y="${cy + 22}" text-anchor="middle" font-family="Hanken Grotesk" font-size="9.5" font-weight="700" letter-spacing="1" fill="var(--cream)">BRAND</text>
+    <text x="${cx}" y="${cy + 90}" text-anchor="middle" font-family="Fraunces, serif" font-size="15" font-weight="600" fill="var(--ink)">Brand Intelligence</text>
+  </g>`;
+        }
+        function edge(x1, y1, x2, y2, cls, color) {
+            const mx = (x1 + x2) / 2;
+            return `<path class="edge ${cls}" d="M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}" stroke="${color}"/>`;
+        }
+        function buildGraph() {
+            const icpLive = !!(active.links.icp || "").trim();
+            const bbLive = !!(active.links.brandbook || "").trim();
+            const sources = [
+                { id: "web", label: "Website", icon: "globe", y: 80, t: "icp" },
+                { id: "pdf", label: "Brand PDFs", icon: "book", y: 185, t: "bb" },
+                { id: "rev", label: "Customer Reviews", icon: "chat", y: 300, t: "icp" },
+                { id: "crm", label: "CRM · HubSpot", icon: "graph", y: 415, t: "bb" },
+                { id: "calls", label: "Sales Calls", icon: "mic", y: 520, t: "icp" },
+            ];
+            const SX = 150, MIDX = 560, ICPY = 210, BBY = 400, COREX = 910, COREY = 305, HW = 84, CR = 56;
+            const srcRight = SX + HW, midLeft = MIDX - HW, midRight = MIDX + HW, coreLeft = COREX - CR;
+            let e = "";
+            sources.forEach(s => {
+                const ty = s.t === "icp" ? ICPY : BBY;
+                const col = s.t === "icp" ? "var(--c-teal)" : "var(--c-amber)";
+                e += edge(srcRight, s.y, midLeft, ty, "live", col);
+            });
+            e += edge(midRight, ICPY, coreLeft, COREY, icpLive ? "live" : "pending", icpLive ? "var(--c-teal)" : "var(--line-2)");
+            e += edge(midRight, BBY, coreLeft, COREY, bbLive ? "live" : "pending", bbLive ? "var(--c-amber)" : "var(--line-2)");
+            let n = "";
+            sources.forEach(s => n += gNode(SX, s.y, s.label, s.icon, "var(--gold)", "source"));
+            n += gNode(MIDX, ICPY, "ICP & Personas", "users", "var(--c-teal)", icpLive ? "live" : "pending");
+            n += gNode(MIDX, BBY, "Brand Book", "book", "var(--c-amber)", bbLive ? "live" : "pending");
+            const labels = `
+    <text x="${SX}" y="34" text-anchor="middle" font-family="Hanken Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="var(--gold)">DATA SOURCES</text>
+    <text x="${MIDX}" y="34" text-anchor="middle" font-family="Hanken Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="var(--gold)">INTELLIGENCE MODULES</text>`;
+            return `<svg class="graphsvg" viewBox="0 0 1080 600" preserveAspectRatio="xMidYMid meet">${labels}${e}${n}${gCore(COREX, COREY)}</svg>`;
+        }
+        function openGraph() {
+            const icpLive = !!(active.links.icp || "").trim();
+            const bbLive = !!(active.links.brandbook || "").trim();
+            document.getElementById("graphClient").textContent = active.name;
+            document.getElementById("graphMeta").innerHTML = `<b>${(icpLive ? 1 : 0) + (bbLive ? 1 : 0)}</b>/2 modules connected · <b>5</b> data sources feeding intelligence`;
+            document.getElementById("graphStage").innerHTML = buildGraph();
+            document.getElementById("graphOverlay").classList.add("open");
+            document.body.style.overflow = "hidden";
+        }
+        function closeGraph() { document.getElementById("graphOverlay").classList.remove("open"); document.body.style.overflow = "" }
+        document.addEventListener("keydown", e => { if (e.key === "Escape") closeGraph() });
+
+        /* ---------- interactions ---------- */
+        function toggleEditor(btn) {
+            const ed = btn.closest(".card").querySelector(".link-editor");
+            ed.classList.toggle("open");
+            if (ed.classList.contains("open")) ed.querySelector("input").focus();
+        }
+        function saveLink(id, btn) {
+            const ed = btn.closest(".link-editor");
+            const val = ed.querySelector("input").value.trim();
+            active.links[id] = val;
+            const s = loadStore(); s[active.code] = active.links; saveStore(s);
+            toast(val ? `Link saved for ${active.name}` : "Link cleared");
+            renderGrids();
+        }
+        function addClient() {
+            const name = prompt("New client name:"); if (!name) return;
+            const code = name.replace(/[^A-Za-z0-9]/g, "").slice(0, 4).toUpperCase() || "NEW";
+            const colors = ["#2F6E6A", "#6A5A93", "#C16A3C", "#3F5B89", "#4E7A4A", "#A65A6B"];
+            const blank = {};[...CONFIG.intelModules, ...CONFIG.growthModules].forEach(m => blank[m.id] = "");
+            const c = { code, name, tag: "Brand Intelligence · Live", color: colors[CONFIG.clients.length % colors.length], status: "live", links: blank };
+            CONFIG.clients.push(c); active = c; renderAll(); toast(`${name} added`);
+        }
+
+        /* ---------- helpers ---------- */
+        function escapeAttr(s) { return (s || "").replace(/"/g, "&quot;").replace(/</g, "&lt;") }
+        function shade(hex, amt) {
+            const n = parseInt(hex.slice(1), 16);
+            let r = (n >> 16) + amt, g = ((n >> 8) & 255) + amt, b = (n & 255) + amt;
+            r = Math.max(0, Math.min(255, r)); g = Math.max(0, Math.min(255, g)); b = Math.max(0, Math.min(255, b));
+            return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+        }
+        let toastTimer;
+        function toast(msg) {
+            const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show");
+            clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+        }
+
+        renderAll();
+    </script>
+</body>
+
+</html>
