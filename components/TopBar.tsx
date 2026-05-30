@@ -18,7 +18,7 @@ export function TopBar() {
           <div className="op-avatar">AJ</div>
           <div className="op-meta">
             <div className="op-name">Arihant Jain</div>
-            <div className="op-role">Founder · Agentic</div>
+            <div className="op-role">Clarity HQ</div>
           </div>
         </div>
       </div>
